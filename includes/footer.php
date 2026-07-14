@@ -6,8 +6,8 @@
                 <h5><i class="bi bi-leaf me-2"></i>Avika</h5>
                 <p class="mb-4" style="font-size:0.9rem; line-height:1.7;">Crafted from Avika finest ingredients. Our mission is to provide sustainable, chemical-free hair care solutions for everyone.</p>
                 <div class="footer-social">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-whatsapp"></i></a>
+                    <a href="https://www.facebook.com/share/g/18EnLp3CKr/"><i class="bi bi-facebook"></i></a>
+                    <a href="https://wa.me/qr/LKEE2Y2PUXZOH1"><i class="bi bi-whatsapp"></i></a>
                     <a href="#"><i class="bi bi-instagram"></i></a>
                     <a href="#"><i class="bi bi-twitter-x"></i></a>
                 </div>
