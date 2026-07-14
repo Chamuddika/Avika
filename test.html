@@ -1,0 +1,151 @@
+<?php 
+// Fetch data from the URL
+ $userEmail = isset($_GET['email']) ? $_GET['email'] : '';
+ $verificationCode = isset($_GET['code']) ? $_GET['code'] : '';
+
+// If no data in URL, show an error state
+if(empty($userEmail) || empty($verificationCode)) {
+    $isValidLink = false;
+} else {
+    $isValidLink = true;
+}
+
+ $navLight = true;
+?>
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email - Natura</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .verify-card {
+            background-color: var(--white);
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            max-width: 500px;
+            width: 100%;
+        }
+        .icon-circle {
+            width: 80px; height: 80px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
+            margin: 0 auto 25px;
+        }
+        .icon-pending { background-color: rgba(74,124,89,0.1); color: var(--primary); }
+        .icon-success { background-color: rgba(26,188,156,0.1); color: #1abc9c; }
+        .icon-error { background-color: rgba(231,76,60,0.1); color: #e74c3c; }
+
+        /* Animation for Success Checkmark */
+        .checkmark-svg { width: 80px; height: 80px; }
+        .checkmark-path { stroke-dasharray: 300; stroke-dashoffset: 300; animation: dash 1s ease-in-out forwards; }
+        @keyframes dash { to { stroke-dashoffset: 0; } }
+    </style>
+</head>
+<body class="bg-cream" style="min-height: 100vh; display: flex; align-items: center;">
+
+    <div class="container text-center">
+        <a href="index.php" class="mb-4 d-inline-block" style="font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--primary); text-decoration: none;">
+            <i class="bi bi-leaf me-2"></i>Natura
+        </a>
+
+        <?php if($isValidLink): ?>
+            <!-- Valid Link View -->
+            <div class="verify-card mx-auto" id="verifyCard">
+                <div id="pendingState">
+                    <div class="icon-circle icon-pending">
+                        <i class="bi bi-envelope-check"></i>
+                    </div>
+                    <h3 class="fw-bold mb-2">Verify Your Email</h3>
+                    <p class="text-muted mb-1">Verifying account for:</p>
+                    <h5 class="text-dark mb-4" style="color: var(--primary) !important;"><?php echo htmlspecialchars(urldecode($userEmail)); ?></h5>
+                    
+                    <!-- Hidden Form to send data to backend -->
+                    <form action="verify_process.php" method="POST" id="verifyForm">
+                        <input type="hidden" name="email" value="<?php echo htmlspecialchars($userEmail); ?>">
+                        <input type="hidden" name="code" value="<?php echo htmlspecialchars($verificationCode); ?>">
+                        
+                        <button type="submit" class="btn btn-primary-custom w-100 py-3 mb-3" id="verifyBtn">
+                            <i class="bi bi-shield-check me-2"></i>Complete Verification
+                        </button>
+                    </form>
+                    <small class="text-muted">Or simply wait and we'll verify it automatically...</small>
+                </div>
+
+                <div id="successState" style="display: none;">
+                    <div class="icon-circle icon-success">
+                        <svg class="checkmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark-path" cx="26" cy="26" r="25" fill="none" stroke="#1abc9c" stroke-width="2"/>
+                            <path class="checkmark-path" fill="none" stroke="#1abc9c" stroke-width="3" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                        </svg>
+                    </div>
+                    <h3 class="fw-bold mb-2 text-success">Verification Successful!</h3>
+                    <p class="text-muted mb-4">Your email has been verified. You can now access your account.</p>
+                    <a href="login.php" class="btn btn-primary-custom w-100 py-3">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Proceed to Login
+                    </a>
+                </div>
+            </div>
+
+        <?php else: ?>
+            <!-- Invalid/Expired Link View -->
+            <div class="verify-card mx-auto">
+                <div class="icon-circle icon-error">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <h3 class="fw-bold mb-2 text-danger">Invalid Link</h3>
+                <p class="text-muted mb-4">The verification link is invalid or has expired. Please request a new one.</p>
+                <a href="register.php" class="btn btn-outline-custom w-100 py-3">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Registration
+                </a>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <script>document.documentElement.classList.remove('no-js');</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-submit simulation for better UX
+        document.addEventListener('DOMContentLoaded', function() {
+            const verifyForm = document.getElementById('verifyForm');
+            
+            if (verifyForm) {
+                // Simulate auto-verification after 3 seconds
+                setTimeout(() => {
+                    simulateVerification();
+                }, 3000);
+            }
+        });
+
+        function simulateVerification() {
+            const btn = document.getElementById('verifyBtn');
+            if(!btn) return;
+            
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Verifying...';
+            btn.disabled = true;
+
+            // Simulate AJAX request to verify_process.php
+            setTimeout(() => {
+                // On Success
+                document.getElementById('pendingState').style.display = 'none';
+                document.getElementById('successState').style.display = 'block';
+            }, 2000);
+        }
+
+        // Handle manual button click
+        const verifyForm = document.getElementById('verifyForm');
+        if(verifyForm) {
+            verifyForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                simulateVerification();
+            });
+        }
+    </script>
+</body>
+</html>
